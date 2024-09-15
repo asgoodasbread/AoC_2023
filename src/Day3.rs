@@ -244,14 +244,12 @@ fn cos(input: &Vec<Vec<char>>) {
     for row in 0..input.len() {
         for column in 0..input[0].len() {
             let mut zmienna = input[row][column];
-            //println!("{}",zmienna);
             if zmienna.is_digit(10) {
                 digits.push(zmienna.to_digit(10).unwrap());
             } else if digits.len() == 0 {
                 continue;
             } else {
                 let mut multiplier = 1;
-                //645
                 let mut sum = 0;
                 for digit in digits.iter().rev() {
                     sum += digit * multiplier;

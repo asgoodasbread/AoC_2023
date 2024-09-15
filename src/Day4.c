@@ -26,35 +26,19 @@ void popFront(Vector* vector) {
     if (vector->size > 0) {
         memmove(vector->data, vector->data + 1, (vector->size - 1) * sizeof(int));
         vector->size--;
-
-        // Optional: Resize the vector if needed
-        if (vector->size < vector->capacity / 2) {
-            vector->capacity /= 2;
-            vector->data = (int*)realloc(vector->data, vector->capacity * sizeof(int));
-            if (vector->data == NULL) {
-                perror("Vector data reallocation failed");
-                exit(EXIT_FAILURE);
-            }
-        }
     } else {
         printf("Vector is empty. Cannot pop front.\n");
     }
 }
 
-void popBack(Vector* vector) {
+int popBack(Vector* vector) {
+    int last_elem = vector->data[vector->size-1];
     if (vector->size > 0) {
         vector->size--;
-        if (vector->size < vector->capacity / 2) {
-            vector->capacity /= 2;
-            vector->data = (int*)realloc(vector->data, vector->capacity * sizeof(int));
-            if (vector->data == NULL) {
-                perror("Vector data reallocation failed");
-                exit(EXIT_FAILURE);
-            }
-        }
     } else {
         printf("Vector is empty. Cannot pop back.\n");
     }
+    return last_elem;
 }
 
 void pushBack(Vector *vector, int value) {
@@ -90,6 +74,7 @@ int main() {
     int result_part_2 = 0;
 
     FILE *file = fopen("../day4_input.txt", "r");
+    //FILE *file = fopen("../test_day_4.txt", "r");
 
     if (file == NULL) {
         perror("Error opening file");
@@ -98,7 +83,7 @@ int main() {
 
     char *semi_colon;
     Vector queue = createVector(1);
-    Vector d = createVector(1);
+    Vector matches_vec = createVector(1);
     while(fgets(line,sizeof(line),file) != NULL){
         //Get Card ID number
         int cardID = 0;
@@ -162,16 +147,17 @@ int main() {
             }
         }
         //printf("%s",line);
-        pushBack(&d,matches);
+        pushBack(&matches_vec, matches);
         pushBack(&queue,cardID);
 
     }
+    //printVector(&queue);
+    //printVector(&matches_vec);
 
     while (queue.size != 0) {
         result_part_2++;
-        int k = queue.data[0];
-        popFront(&queue);
-        for (int i = k + 1; i <= k + d.data[k-1]; i++) {
+        int elem_cardID = popBack(&queue);
+        for (int i = elem_cardID + 1; i <= elem_cardID + matches_vec.data[elem_cardID - 1]; i++) {
             pushBack(&queue, i);
         }
     }
